@@ -131,6 +131,11 @@ class BitsharesOrderEngine(Storage, Events):
                 # The order(s) we tried to cancel doesn't exist
                 self.bitshares.txbuffer.clear()
                 return False
+            elif "Order does not exist" in str(exception):
+                self.log.warning("Cancel order does not exist:{}".format(str(exception)))
+                del_order_id = str(exception).split("Limit order ")[-1].split(" does not exist")[0]
+                orders.remove(del_order_id)
+                return False
             else:
                 self.log.exception("Unable to cancel order")
                 return False
