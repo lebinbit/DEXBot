@@ -131,11 +131,11 @@ class BitsharesOrderEngine(Storage, Events):
                 # The order(s) we tried to cancel doesn't exist
                 self.bitshares.txbuffer.clear()
                 return False
-            elif "Order does not exist" in str(exception):
-                self.log.warning("Cancel order does not exist:{}".format(str(exception)))
-                del_order_id = str(exception).split("Limit order ")[-1].split(" does not exist")[0]
-                orders.remove(del_order_id)
-                return False
+#             elif "Order does not exist" in str(exception):
+#                 self.log.warning("Cancel order does not exist:{}".format(str(exception)))
+#                 del_order_id = str(exception).split("Limit order ")[-1].split(" does not exist")[0]
+#                 orders.remove(del_order_id)
+#                 return False
             else:
                 self.log.exception("Unable to cancel order")
                 return False
@@ -745,6 +745,14 @@ class BitsharesOrderEngine(Storage, Events):
                         new = self.bitshares.rpc.url
                         self.log.info('Old: {}, new: {}'.format(old, new))
                         tries += 1
+                elif "Order does not exist" in str(exception):
+                    if tries > MAX_TRIES:
+                        raise
+                    else:
+                        tries += 1
+                        self.log.warning("**********Order does not exist".format(str(exception)))
+                        self.bitshares.txbuffer.clear()
+                        self._account.refresh()
                 else:
                     raise
 
