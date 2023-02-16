@@ -202,7 +202,8 @@ class Strategy(StrategyBase):
                 The goal is to handle race condition when partially filled order was further filled before we actually
                 replaced them.
                 """
-                if str(exception).startswith('Assert Exception: maybe_found != nullptr: Unable to find Object'):
+                if str(exception).startswith('Assert Exception: maybe_found != nullptr: Unable to find Object') or \
+                        ("A transaction must have at least one operation" in str(exception)):
                     self.log.warning(exception)
                     self.bitshares.txbuffer.clear()
                     return
