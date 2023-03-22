@@ -755,6 +755,8 @@ class BitsharesOrderEngine(Storage, Events):
                         self._account.refresh()
                 else:
                     raise
+            except KeyError as e:
+                self.log.warning("KeyError {}".format(str(e)))
 
     @property
     def balances(self):
