@@ -705,6 +705,8 @@ class BitsharesOrderEngine(Storage, Events):
                         self.bitshares.txbuffer.clear()
                         self._account.refresh()
                         time.sleep(2)
+                elif "Order does not exist" in str(exception):
+                    raise
                 elif "now <= trx.expiration" in str(exception):  # Usually loss of sync to blockchain
                     if tries > MAX_TRIES:
                         raise
